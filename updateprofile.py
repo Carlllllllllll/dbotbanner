@@ -81,14 +81,15 @@ def index():
     return "Profile update script has run."
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 3000))
+    port = int(os.environ.get("PORT", 10000))
 
-    print(f'\n{Fore.CYAN}\x1b[1m╔═════════════════════════════════════════════════╗{Style.RESET_ALL}')
-    print(f'{Fore.CYAN}\x1b[1m║                                                 ║{Style.RESET_ALL}')
-    print(f'{Fore.CYAN}\x1b[1m║  🎨 Banner/Avatar Update: {Fore.GREEN}Success{Style.RESET_ALL}                    ║')
-    print(f'{Fore.CYAN}\x1b[1m║  🚀 Running on Port: {Fore.GREEN}{port}{Style.RESET_ALL}                    ║')
-    print(f'{Fore.CYAN}\x1b[1m║  ⚙️ Powered by Carl, GlaceYT {Style.RESET_ALL}                        ║')
-    print(f'{Fore.CYAN}\x1b[1m║                                                 ║{Style.RESET_ALL}')
-    print(f'{Fore.CYAN}\x1b[1m╚═════════════════════════════════════════════════╝{Style.RESET_ALL}')
+    print(f'\n{Fore.BLUE}\x1b[1m╔═════════════════════════════════════════════════╗{Style.RESET_ALL}')
+    print(f'{Fore.BLUE}\x1b[1m║{Style.RESET_ALL}{Fore.BLUE}{" " * 57}{Style.RESET_ALL}')
+    print(f'{Fore.BLUE}\x1b[1m║  🎨 Banner Update: {"In Progress" if "banner" in payload else "Not Updated"}{Style.RESET_ALL}')
+    print(f'{Fore.BLUE}\x1b[1m║  🎨 Avatar Update: {"In Progress" if "avatar" in payload else "Not Updated"}{Style.RESET_ALL}')
+    print(f'{Fore.BLUE}\x1b[1m║  🚀 Running on Port: {Fore.GREEN}{port}{Style.RESET_ALL}{Fore.BLUE}{" " * 37}{Style.RESET_ALL}')
+    print(f'{Fore.BLUE}\x1b[1m║  ⚙️ Powered by Carl, GlaceYT{Style.RESET_ALL}{Fore.BLUE}{" " * 44}{Style.RESET_ALL}')
+    print(f'{Fore.BLUE}\x1b[1m║{Style.RESET_ALL}{Fore.BLUE}{" " * 57}{Style.RESET_ALL}')
+    print(f'{Fore.BLUE}\x1b[1m╚═════════════════════════════════════════════════╝{Style.RESET_ALL}')
 
     app.run(host='0.0.0.0', port=port, debug=False)
