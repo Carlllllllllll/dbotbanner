@@ -5,6 +5,7 @@ import time
 from dotenv import load_dotenv
 from flask import Flask
 from colorama import Fore, Style, init
+import logging
 
 init()
 
@@ -84,7 +85,7 @@ app = Flask(__name__)
 def index():
     return "Profile update script has run."
 
-if __name__ == "__main__":
+
     port = int(os.environ.get("PORT", 10000))
 
     print(f'\n{Fore.GREEN}🎨 Banner Update: {banner_update_status}{Style.RESET_ALL}')
