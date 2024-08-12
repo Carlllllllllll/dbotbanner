@@ -99,16 +99,17 @@ if __name__ == "__main__":
 
     # Print the formatted console output
     box_width = 70  # Adjusted width for better fit
+
     profile_update_status = profile_update_status if 'profile_update_status' in locals() else "Not Updated"
     banner_update_status = banner_update_status if 'banner_update_status' in locals() else "Not Updated"
 
     print(f'\n{Fore.BLUE}╔{"═" * (box_width - 2)}╗{Style.RESET_ALL}')
-    print(f'{Fore.BLUE}║{Style.RESET_ALL}{" " * (box_width - 2)}║')
-    print(f'{Fore.BLUE}║  🎨 Banner Update: {Fore.GREEN if banner_update_status == "Success" else Fore.RED}{banner_update_status}{Style.RESET_ALL}{" " * (box_width - 2 - len(f"  🎨 Banner Update: {banner_update_status}"))}║')
-    print(f'{Fore.BLUE}║  🎨 Avatar Update: {Fore.GREEN if profile_update_status == "Success" else Fore.RED}{profile_update_status}{Style.RESET_ALL}{" " * (box_width - 2 - len(f"  🎨 Avatar Update: {profile_update_status}"))}║')
-    print(f'{Fore.BLUE}║  🚀 Running on Port: {Fore.GREEN}{port}{Style.RESET_ALL}{" " * (box_width - 2 - len(f"  🚀 Running on Port: {port}"))}║')
-    print(f'{Fore.BLUE}║  ⚙️ Powered by Carl, GlaceYT{Style.RESET_ALL}{" " * (box_width - 2 - len("  ⚙️ Powered by Carl, GlaceYT"))}║')
-    print(f'{Fore.BLUE}║{Style.RESET_ALL}{" " * (box_width - 2)}║')
+    print(f'{Fore.BLUE}║{Style.RESET_ALL}  {Fore.WHITE}{" " * (box_width - 4)}{Style.RESET_ALL}║')
+    print(f'{Fore.BLUE}║  🎨 Banner Update: {Fore.GREEN if banner_update_status == "Success" else Fore.RED}{banner_update_status}{Style.RESET_ALL}{" " * (box_width - 4 - len(f"🎨 Banner Update: {banner_update_status}"))}║')
+    print(f'{Fore.BLUE}║  🎨 Avatar Update: {Fore.GREEN if profile_update_status == "Success" else Fore.RED}{profile_update_status}{Style.RESET_ALL}{" " * (box_width - 4 - len(f"🎨 Avatar Update: {profile_update_status}"))}║')
+    print(f'{Fore.BLUE}║  🚀 Running on Port: {Fore.GREEN}{port}{Style.RESET_ALL}{" " * (box_width - 4 - len(f"🚀 Running on Port: {port}"))}║')
+    print(f'{Fore.BLUE}║  ⚙️ Powered by Carl, GlaceYT{Style.RESET_ALL}{" " * (box_width - 4 - len("⚙️ Powered by Carl, GlaceYT"))}║')
+    print(f'{Fore.BLUE}║{Style.RESET_ALL}  {Fore.WHITE}{" " * (box_width - 4)}{Style.RESET_ALL}║')
     print(f'{Fore.BLUE}╚{"═" * (box_width - 2)}╝{Style.RESET_ALL}')
 
     app.run(host='0.0.0.0', port=port, debug=False)
