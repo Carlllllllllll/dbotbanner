@@ -4,19 +4,31 @@ import os
 import time
 from dotenv import load_dotenv
 
+# Load environment variables
 load_dotenv()
 
 DISCORD_BOT_TOKEN = os.getenv('TOKEN')
 
+# Check if the bot token is set
 if not DISCORD_BOT_TOKEN:
     print("Error: TOKEN environment variable not set.")
     exit()
 
+# Define URLs for profile picture and/or banner
 PROFILE_IMAGE_URL = "https://media.discordapp.net/attachments/1208810080426795061/1271602484061671424/Gido-PFP-Carl.gif?ex=66b9e9d9&is=66b89859&hm=435b9550427e5f05bbff780e509e83170057b9f576f2380b672826c6b346c801&="
 BANNER_IMAGE_URL = "https://media.discordapp.net/attachments/1208810080426795061/1271602484519112724/Gido-Banner-Carl.gif?ex=66b9e9d9&is=66b89859&hm=36cef24fa243affd09339b811aff865f0169dd29cd64b453724963d13e4941e8&="
 
 payload = {}
 
+# Create a file to track if the code has run
+FLAG_FILE = 'profile_update_flag.txt'
+
+# Check if the script has already run
+if os.path.exists(FLAG_FILE):
+    print("The profile has already been updated. Exiting.")
+    exit()
+
+# Download and encode the profile picture
 if PROFILE_IMAGE_URL:
     profile_image_response = requests.get(PROFILE_IMAGE_URL)
     if profile_image_response.status_code == 200:
@@ -25,6 +37,7 @@ if PROFILE_IMAGE_URL:
     else:
         print('Failed to download profile picture.')
 
+# Download and encode the banner image
 if BANNER_IMAGE_URL:
     banner_image_response = requests.get(BANNER_IMAGE_URL)
     if banner_image_response.status_code == 200:
@@ -33,6 +46,7 @@ if BANNER_IMAGE_URL:
     else:
         print('Failed to download banner.')
 
+# Update profile and/or banner if there is something to update
 if payload:
     headers = {
         'Authorization': f'Bot {DISCORD_BOT_TOKEN}',
@@ -61,4 +75,12 @@ if payload:
 else:
     print('No updates to make. Both profile and banner URLs were blank.')
 
-print("Running on port 300. Powered by Carl, GlaceYT")
+# Create a flag file to indicate that the script has run
+with open(FLAG_FILE, 'w') as f:
+    f.write('Profile update script has run.')
+
+# Print the port and other details
+print("\n------------------------------------------")
+print("Running on port 3000")
+print("Powered by Carl, GlaceYT")
+print("------------------------------------------")
