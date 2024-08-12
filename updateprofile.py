@@ -5,12 +5,9 @@ import time
 from dotenv import load_dotenv
 from flask import Flask
 from colorama import Fore, Style, init
-import logging
 
-# Initialize colorama
 init()
 
-# Load environment variables
 load_dotenv()
 
 DISCORD_BOT_TOKEN = os.getenv('TOKEN')
@@ -30,29 +27,26 @@ if os.path.exists(FLAG_FILE):
     print(f"{Fore.YELLOW}The profile has already been updated. Exiting.{Style.RESET_ALL}")
     exit()
 
-def download_image(url):
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        return base64.b64encode(response.content).decode('utf-8')
-    except requests.RequestException as e:
-        return str(e)
+banner_update_status = "Not Updated"
+avatar_update_status = "Not Updated"
 
 if PROFILE_IMAGE_URL:
-    profile_image_base64 = download_image(PROFILE_IMAGE_URL)
-    if "Error" in profile_image_base64:
-        profile_update_status = f"Failed to download profile picture: {profile_image_base64}"
-    else:
+    profile_image_response = requests.get(PROFILE_IMAGE_URL)
+    if profile_image_response.status_code == 200:
+        profile_image_base64 = base64.b64encode(profile_image_response.content).decode('utf-8')
         payload["avatar"] = f"data:image/gif;base64,{profile_image_base64}"
-        profile_update_status = "Success"
+        avatar_update_status = "Success"
+    else:
+        print(f"{Fore.RED}Failed to download profile picture.{Style.RESET_ALL}")
 
 if BANNER_IMAGE_URL:
-    banner_image_base64 = download_image(BANNER_IMAGE_URL)
-    if "Error" in banner_image_base64:
-        banner_update_status = f"Failed to download banner: {banner_image_base64}"
-    else:
+    banner_image_response = requests.get(BANNER_IMAGE_URL)
+    if banner_image_response.status_code == 200:
+        banner_image_base64 = base64.b64encode(banner_image_response.content).decode('utf-8')
         payload["banner"] = f"data:image/gif;base64,{banner_image_base64}"
         banner_update_status = "Success"
+    else:
+        print(f"{Fore.RED}Failed to download banner.{Style.RESET_ALL}")
 
 if payload:
     headers = {
@@ -93,23 +87,9 @@ def index():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
 
-    # Suppress Flask development server output
-    log = logging.getLogger('werkzeug')
-    log.setLevel(logging.ERROR)
-
-    # Print the formatted console output
-    box_width = 70  # Adjusted width for better fit
-
-    profile_update_status = profile_update_status if 'profile_update_status' in locals() else "Not Updated"
-    banner_update_status = banner_update_status if 'banner_update_status' in locals() else "Not Updated"
-
-    print(f'\n{Fore.BLUE}╔{"═" * (box_width - 2)}╗{Style.RESET_ALL}')
-    print(f'{Fore.BLUE}║{Style.RESET_ALL}  {Fore.WHITE}{" " * (box_width - 4)}{Style.RESET_ALL}║')
-    print(f'{Fore.BLUE}║  🎨 Banner Update: {Fore.GREEN if banner_update_status == "Success" else Fore.RED}{banner_update_status}{Style.RESET_ALL}{" " * (box_width - 4 - len(f"🎨 Banner Update: {banner_update_status}"))}║')
-    print(f'{Fore.BLUE}║  🎨 Avatar Update: {Fore.GREEN if profile_update_status == "Success" else Fore.RED}{profile_update_status}{Style.RESET_ALL}{" " * (box_width - 4 - len(f"🎨 Avatar Update: {profile_update_status}"))}║')
-    print(f'{Fore.BLUE}║  🚀 Running on Port: {Fore.GREEN}{port}{Style.RESET_ALL}{" " * (box_width - 4 - len(f"🚀 Running on Port: {port}"))}║')
-    print(f'{Fore.BLUE}║  ⚙️ Powered by Carl, GlaceYT{Style.RESET_ALL}{" " * (box_width - 4 - len("⚙️ Powered by Carl, GlaceYT"))}║')
-    print(f'{Fore.BLUE}║{Style.RESET_ALL}  {Fore.WHITE}{" " * (box_width - 4)}{Style.RESET_ALL}║')
-    print(f'{Fore.BLUE}╚{"═" * (box_width - 2)}╝{Style.RESET_ALL}')
+    print(f'\n{Fore.GREEN}🎨 Banner Update: {banner_update_status}{Style.RESET_ALL}')
+    print(f'{Fore.GREEN}🎨 Avatar Update: {avatar_update_status}{Style.RESET_ALL}')
+    print(f'{Fore.GREEN}🚀 Running on Port: {port}{Style.RESET_ALL}')
+    print(f'{Fore.GREEN}⚙️ Powered by Carl, GlaceYT{Style.RESET_ALL}')
 
     app.run(host='0.0.0.0', port=port, debug=False)
