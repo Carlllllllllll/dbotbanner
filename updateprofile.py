@@ -1,8 +1,9 @@
 import requests
 import base64
+import os
 
-# Replace discord token with yours
-DISCORD_BOT_TOKEN = ""
+# Read the bot token from environment variables
+DISCORD_BOT_TOKEN = os.getenv('DISCORD_BOT_TOKEN')
 
 # Define URLs for profile picture and/or banner. Leave one blank "" if you only want to do the other one
 PROFILE_IMAGE_URL = "https://media.discordapp.net/attachments/1208810080426795061/1271602484061671424/Gido-PFP-Carl.gif?ex=66b9e9d9&is=66b89859&hm=435b9550427e5f05bbff780e509e83170057b9f576f2380b672826c6b346c801&="
