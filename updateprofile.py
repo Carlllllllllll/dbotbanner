@@ -27,21 +27,29 @@ if os.path.exists(FLAG_FILE):
     print(f"{Fore.YELLOW}The profile has already been updated. Exiting.{Style.RESET_ALL}")
     exit()
 
+def download_image(url):
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        return base64.b64encode(response.content).decode('utf-8')
+    except requests.RequestException as e:
+        return str(e)
+
 if PROFILE_IMAGE_URL:
-    profile_image_response = requests.get(PROFILE_IMAGE_URL)
-    if profile_image_response.status_code == 200:
-        profile_image_base64 = base64.b64encode(profile_image_response.content).decode('utf-8')
-        payload["avatar"] = f"data:image/gif;base64,{profile_image_base64}"
+    profile_image_base64 = download_image(PROFILE_IMAGE_URL)
+    if "Error" in profile_image_base64:
+        profile_update_status = f"Failed to download profile picture: {profile_image_base64}"
     else:
-        print(f"{Fore.RED}Failed to download profile picture.{Style.RESET_ALL}")
+        payload["avatar"] = f"data:image/gif;base64,{profile_image_base64}"
+        profile_update_status = "Success"
 
 if BANNER_IMAGE_URL:
-    banner_image_response = requests.get(BANNER_IMAGE_URL)
-    if banner_image_response.status_code == 200:
-        banner_image_base64 = base64.b64encode(banner_image_response.content).decode('utf-8')
-        payload["banner"] = f"data:image/gif;base64,{banner_image_base64}"
+    banner_image_base64 = download_image(BANNER_IMAGE_URL)
+    if "Error" in banner_image_base64:
+        banner_update_status = f"Failed to download banner: {banner_image_base64}"
     else:
-        print(f"{Fore.RED}Failed to download banner.{Style.RESET_ALL}")
+        payload["banner"] = f"data:image/gif;base64,{banner_image_base64}"
+        banner_update_status = "Success"
 
 if payload:
     headers = {
@@ -53,7 +61,6 @@ if payload:
         response = requests.patch('https://discord.com/api/v10/users/@me', headers=headers, json=payload)
 
         if response.status_code == 200:
-            print(f"{Fore.GREEN}Profile and/or banner updated successfully! 🎉{Style.RESET_ALL}")
             break
         elif response.status_code == 429:
             retry_after = response.json().get('retry_after', 60)
@@ -83,13 +90,21 @@ def index():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
 
-    print(f'\n{Fore.BLUE}\x1b[1m╔═════════════════════════════════════════════════╗{Style.RESET_ALL}')
-    print(f'{Fore.BLUE}\x1b[1m║{Style.RESET_ALL}{Fore.BLUE}{" " * 57}{Style.RESET_ALL}')
-    print(f'{Fore.BLUE}\x1b[1m║  🎨 Banner Update: {"In Progress" if "banner" in payload else "Not Updated"}{Style.RESET_ALL}')
-    print(f'{Fore.BLUE}\x1b[1m║  🎨 Avatar Update: {"In Progress" if "avatar" in payload else "Not Updated"}{Style.RESET_ALL}')
-    print(f'{Fore.BLUE}\x1b[1m║  🚀 Running on Port: {Fore.GREEN}{port}{Style.RESET_ALL}{Fore.BLUE}{" " * 37}{Style.RESET_ALL}')
-    print(f'{Fore.BLUE}\x1b[1m║  ⚙️ Powered by Carl, GlaceYT{Style.RESET_ALL}{Fore.BLUE}{" " * 44}{Style.RESET_ALL}')
-    print(f'{Fore.BLUE}\x1b[1m║{Style.RESET_ALL}{Fore.BLUE}{" " * 57}{Style.RESET_ALL}')
-    print(f'{Fore.BLUE}\x1b[1m╚═════════════════════════════════════════════════╝{Style.RESET_ALL}')
+    # Prepare status messages
+    profile_update_status = profile_update_status if 'profile_update_status' in locals() else "Not Updated"
+    banner_update_status = banner_update_status if 'banner_update_status' in locals() else "Not Updated"
+
+    # Define the width of the square box
+    box_width = 75
+
+    # Print the formatted console output
+    print(f'\n{Fore.BLUE}\x1b[1m╔{"═" * (box_width - 2)}╗{Style.RESET_ALL}')
+    print(f'{Fore.BLUE}\x1b[1m║{Style.RESET_ALL}{" " * (box_width - 2)}║')
+    print(f'{Fore.BLUE}\x1b[1m║  🎨 Banner Update: {Fore.GREEN if banner_update_status == "Success" else Fore.RED}{banner_update_status}{Style.RESET_ALL}{" " * (box_width - 2 - len(f"  🎨 Banner Update: {banner_update_status}"))}║')
+    print(f'{Fore.BLUE}\x1b[1m║  🎨 Avatar Update: {Fore.GREEN if profile_update_status == "Success" else Fore.RED}{profile_update_status}{Style.RESET_ALL}{" " * (box_width - 2 - len(f"  🎨 Avatar Update: {profile_update_status}"))}║')
+    print(f'{Fore.BLUE}\x1b[1m║  🚀 Running on Port: {Fore.GREEN}{port}{Style.RESET_ALL}{" " * (box_width - 2 - len(f"  🚀 Running on Port: {port}"))}║')
+    print(f'{Fore.BLUE}\x1b[1m║  ⚙️ Powered by Carl, GlaceYT{Style.RESET_ALL}{" " * (box_width - 2 - len("  ⚙️ Powered by Carl, GlaceYT"))}║')
+    print(f'{Fore.BLUE}\x1b[1m║{Style.RESET_ALL}{" " * (box_width - 2)}║')
+    print(f'{Fore.BLUE}\x1b[1m╚{"═" * (box_width - 2)}╝{Style.RESET_ALL}')
 
     app.run(host='0.0.0.0', port=port, debug=False)
