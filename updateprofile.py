@@ -93,18 +93,15 @@ def index():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
 
-    # Prepare status messages
-    profile_update_status = profile_update_status if 'profile_update_status' in locals() else "Not Updated"
-    banner_update_status = banner_update_status if 'banner_update_status' in locals() else "Not Updated"
-
-    # Define the width of the square box
-    box_width = 75
-
     # Suppress Flask development server output
     log = logging.getLogger('werkzeug')
     log.setLevel(logging.ERROR)
 
     # Print the formatted console output
+    box_width = 70  # Adjusted width for better fit
+    profile_update_status = profile_update_status if 'profile_update_status' in locals() else "Not Updated"
+    banner_update_status = banner_update_status if 'banner_update_status' in locals() else "Not Updated"
+
     print(f'\n{Fore.BLUE}╔{"═" * (box_width - 2)}╗{Style.RESET_ALL}')
     print(f'{Fore.BLUE}║{Style.RESET_ALL}{" " * (box_width - 2)}║')
     print(f'{Fore.BLUE}║  🎨 Banner Update: {Fore.GREEN if banner_update_status == "Success" else Fore.RED}{banner_update_status}{Style.RESET_ALL}{" " * (box_width - 2 - len(f"  🎨 Banner Update: {banner_update_status}"))}║')
