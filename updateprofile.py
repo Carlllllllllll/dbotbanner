@@ -5,9 +5,12 @@ import time
 from dotenv import load_dotenv
 from flask import Flask
 from colorama import Fore, Style, init
+import logging
 
+# Initialize colorama
 init()
 
+# Load environment variables
 load_dotenv()
 
 DISCORD_BOT_TOKEN = os.getenv('TOKEN')
@@ -97,14 +100,18 @@ if __name__ == "__main__":
     # Define the width of the square box
     box_width = 75
 
+    # Suppress Flask development server output
+    log = logging.getLogger('werkzeug')
+    log.setLevel(logging.ERROR)
+
     # Print the formatted console output
-    print(f'\n{Fore.BLUE}\x1b[1m╔{"═" * (box_width - 2)}╗{Style.RESET_ALL}')
-    print(f'{Fore.BLUE}\x1b[1m║{Style.RESET_ALL}{" " * (box_width - 2)}║')
-    print(f'{Fore.BLUE}\x1b[1m║  🎨 Banner Update: {Fore.GREEN if banner_update_status == "Success" else Fore.RED}{banner_update_status}{Style.RESET_ALL}{" " * (box_width - 2 - len(f"  🎨 Banner Update: {banner_update_status}"))}║')
-    print(f'{Fore.BLUE}\x1b[1m║  🎨 Avatar Update: {Fore.GREEN if profile_update_status == "Success" else Fore.RED}{profile_update_status}{Style.RESET_ALL}{" " * (box_width - 2 - len(f"  🎨 Avatar Update: {profile_update_status}"))}║')
-    print(f'{Fore.BLUE}\x1b[1m║  🚀 Running on Port: {Fore.GREEN}{port}{Style.RESET_ALL}{" " * (box_width - 2 - len(f"  🚀 Running on Port: {port}"))}║')
-    print(f'{Fore.BLUE}\x1b[1m║  ⚙️ Powered by Carl, GlaceYT{Style.RESET_ALL}{" " * (box_width - 2 - len("  ⚙️ Powered by Carl, GlaceYT"))}║')
-    print(f'{Fore.BLUE}\x1b[1m║{Style.RESET_ALL}{" " * (box_width - 2)}║')
-    print(f'{Fore.BLUE}\x1b[1m╚{"═" * (box_width - 2)}╝{Style.RESET_ALL}')
+    print(f'\n{Fore.BLUE}╔{"═" * (box_width - 2)}╗{Style.RESET_ALL}')
+    print(f'{Fore.BLUE}║{Style.RESET_ALL}{" " * (box_width - 2)}║')
+    print(f'{Fore.BLUE}║  🎨 Banner Update: {Fore.GREEN if banner_update_status == "Success" else Fore.RED}{banner_update_status}{Style.RESET_ALL}{" " * (box_width - 2 - len(f"  🎨 Banner Update: {banner_update_status}"))}║')
+    print(f'{Fore.BLUE}║  🎨 Avatar Update: {Fore.GREEN if profile_update_status == "Success" else Fore.RED}{profile_update_status}{Style.RESET_ALL}{" " * (box_width - 2 - len(f"  🎨 Avatar Update: {profile_update_status}"))}║')
+    print(f'{Fore.BLUE}║  🚀 Running on Port: {Fore.GREEN}{port}{Style.RESET_ALL}{" " * (box_width - 2 - len(f"  🚀 Running on Port: {port}"))}║')
+    print(f'{Fore.BLUE}║  ⚙️ Powered by Carl, GlaceYT{Style.RESET_ALL}{" " * (box_width - 2 - len("  ⚙️ Powered by Carl, GlaceYT"))}║')
+    print(f'{Fore.BLUE}║{Style.RESET_ALL}{" " * (box_width - 2)}║')
+    print(f'{Fore.BLUE}╚{"═" * (box_width - 2)}╝{Style.RESET_ALL}')
 
     app.run(host='0.0.0.0', port=port, debug=False)
