@@ -4,50 +4,45 @@ import os
 import time
 from dotenv import load_dotenv
 from flask import Flask
+from colorama import Fore, Style, init
 
-# Load environment variables
+init()
+
 load_dotenv()
 
 DISCORD_BOT_TOKEN = os.getenv('TOKEN')
 
-# Check if the bot token is set
 if not DISCORD_BOT_TOKEN:
-    print("Error: TOKEN environment variable not set.")
+    print(f"{Fore.RED}Error: TOKEN environment variable not set.{Style.RESET_ALL}")
     exit()
 
-# Define URLs for profile picture and/or banner
 PROFILE_IMAGE_URL = "https://media.discordapp.net/attachments/1208810080426795061/1271602484061671424/Gido-PFP-Carl.gif?ex=66b9e9d9&is=66b89859&hm=435b9550427e5f05bbff780e509e83170057b9f576f2380b672826c6b346c801&="
 BANNER_IMAGE_URL = "https://media.discordapp.net/attachments/1208810080426795061/1271602484519112724/Gido-Banner-Carl.gif?ex=66b9e9d9&is=66b89859&hm=36cef24fa243affd09339b811aff865f0169dd29cd64b453724963d13e4941e8&="
 
 payload = {}
 
-# Create a file to track if the code has run
 FLAG_FILE = 'profile_update_flag.txt'
 
-# Check if the script has already run
 if os.path.exists(FLAG_FILE):
-    print("The profile has already been updated. Exiting.")
+    print(f"{Fore.YELLOW}The profile has already been updated. Exiting.{Style.RESET_ALL}")
     exit()
 
-# Download and encode the profile picture
 if PROFILE_IMAGE_URL:
     profile_image_response = requests.get(PROFILE_IMAGE_URL)
     if profile_image_response.status_code == 200:
         profile_image_base64 = base64.b64encode(profile_image_response.content).decode('utf-8')
         payload["avatar"] = f"data:image/gif;base64,{profile_image_base64}"
     else:
-        print('Failed to download profile picture.')
+        print(f"{Fore.RED}Failed to download profile picture.{Style.RESET_ALL}")
 
-# Download and encode the banner image
 if BANNER_IMAGE_URL:
     banner_image_response = requests.get(BANNER_IMAGE_URL)
     if banner_image_response.status_code == 200:
         banner_image_base64 = base64.b64encode(banner_image_response.content).decode('utf-8')
         payload["banner"] = f"data:image/gif;base64,{banner_image_base64}"
     else:
-        print('Failed to download banner.')
+        print(f"{Fore.RED}Failed to download banner.{Style.RESET_ALL}")
 
-# Update profile and/or banner if there is something to update
 if payload:
     headers = {
         'Authorization': f'Bot {DISCORD_BOT_TOKEN}',
@@ -58,37 +53,42 @@ if payload:
         response = requests.patch('https://discord.com/api/v10/users/@me', headers=headers, json=payload)
 
         if response.status_code == 200:
-            print('Profile and/or banner updated successfully!')
+            print(f"{Fore.GREEN}Profile and/or banner updated successfully! 🎉{Style.RESET_ALL}")
             break
         elif response.status_code == 429:
             retry_after = response.json().get('retry_after', 60)
-            print(f'Rate limit exceeded. Retrying after {retry_after} seconds...')
+            print(f"{Fore.YELLOW}Rate limit exceeded. Retrying after {retry_after} seconds...{Style.RESET_ALL}")
             time.sleep(retry_after)
         elif response.status_code == 401:
-            print('Invalid token. Please check your token and try again.')
+            print(f"{Fore.RED}Invalid token. Please check your token and try again.{Style.RESET_ALL}")
             break
         elif response.status_code == 50035:
-            print('Avatar rate limit exceeded. Try again later.')
+            print(f"{Fore.RED}Avatar rate limit exceeded. Try again later.{Style.RESET_ALL}")
             break
         else:
-            print(f'Failed to update profile and/or banner: {response.text}')
+            print(f"{Fore.RED}Failed to update profile and/or banner: {response.text}{Style.RESET_ALL}")
             break
 else:
-    print('No updates to make. Both profile and banner URLs were blank.')
+    print(f"{Fore.YELLOW}No updates to make. Both profile and banner URLs were blank.{Style.RESET_ALL}")
 
-# Create a flag file to indicate that the script has run
 with open(FLAG_FILE, 'w') as f:
     f.write('Profile update script has run.')
 
-# Flask app setup
 app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return "Profile update script has run. Running on port 3000."
+    return "Profile update script has run."
 
 if __name__ == "__main__":
-    # Use port 3000 for local testing; Render might override this
     port = int(os.environ.get("PORT", 3000))
-    print(f"Running on port {port}")
-    app.run(host='0.0.0.0', port=port)
+
+    print(f'\n{Fore.CYAN}\x1b[1m╔═════════════════════════════════════════════════╗{Style.RESET_ALL}')
+    print(f'{Fore.CYAN}\x1b[1m║                                                 ║{Style.RESET_ALL}')
+    print(f'{Fore.CYAN}\x1b[1m║  🎨 Banner/Avatar Update: {Fore.GREEN}Success{Style.RESET_ALL}                    ║')
+    print(f'{Fore.CYAN}\x1b[1m║  🚀 Running on Port: {Fore.GREEN}{port}{Style.RESET_ALL}                    ║')
+    print(f'{Fore.CYAN}\x1b[1m║  ⚙️ Powered by Carl, GlaceYT {Style.RESET_ALL}                        ║')
+    print(f'{Fore.CYAN}\x1b[1m║                                                 ║{Style.RESET_ALL}')
+    print(f'{Fore.CYAN}\x1b[1m╚═════════════════════════════════════════════════╝{Style.RESET_ALL}')
+
+    app.run(host='0.0.0.0', port=port, debug=False)
