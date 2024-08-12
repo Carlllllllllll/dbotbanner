@@ -3,6 +3,7 @@ import base64
 import os
 import time
 from dotenv import load_dotenv
+from flask import Flask
 
 # Load environment variables
 load_dotenv()
@@ -79,8 +80,15 @@ else:
 with open(FLAG_FILE, 'w') as f:
     f.write('Profile update script has run.')
 
-# Print the port and other details
-print("\n------------------------------------------")
-print("Running on port 3000")
-print("Powered by Carl, GlaceYT")
-print("------------------------------------------")
+# Flask app setup
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return "Profile update script has run. Running on port 3000."
+
+if __name__ == "__main__":
+    # Use port 3000 for local testing; Render might override this
+    port = int(os.environ.get("PORT", 3000))
+    print(f"Running on port {port}")
+    app.run(host='0.0.0.0', port=port)
